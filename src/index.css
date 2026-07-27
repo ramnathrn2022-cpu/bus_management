@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased min-h-screen transition-colors duration-300;
+  }
+}
+
+/* Modern Card Styling */
+.premium-card {
+  background: #ffffff;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.01);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+  border-color: rgba(210, 59, 68, 0.15);
+}
+
+/* Glassmorphism overlays */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-dark {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.04);
+}
+
+/* Premium Buttons */
+.btn-premium-red {
+  background: linear-gradient(135deg, #ea4c53 0%, #d23b44 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 14px 0 rgba(210, 59, 68, 0.3);
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-premium-red:hover {
+  background: linear-gradient(135deg, #f05c62 0%, #da464f 100%);
+  box-shadow: 0 6px 20px 0 rgba(210, 59, 68, 0.45);
+  transform: translateY(-1px);
+}
+
+.btn-premium-dark {
+  background: #1e293b;
+  color: white;
+  border: 1px solid #334155;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.btn-premium-dark:hover {
+  background: #0f172a;
+  transform: translateY(-1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Background grid mesh */
+.bg-grid-mesh {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(241, 245, 249, 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(241, 245, 249, 0.6) 1px, transparent 1px);
+}
+
+/* Animation utilities */
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.pulse-glow {
+  animation: pulseGlow 4s infinite ease-in-out;
+}
+
