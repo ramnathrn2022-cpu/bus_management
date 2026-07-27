@@ -14,6 +14,9 @@ class StripApiPrefixMiddleware:
             scope["path"] = scope["path"][4:]
             if not scope["path"]:
                 scope["path"] = "/"
+            if "raw_path" in scope:
+                scope["raw_path"] = scope["path"].encode("utf-8")
         await self.app(scope, receive, send)
+
 
 app = StripApiPrefixMiddleware(app)
