@@ -904,3 +904,10 @@ def get_driver_active_trip(driver_id: int, db: Session = Depends(get_db)):
 @app.get("/trips/bus/{bus_id}/active", response_model=Optional[TripResponse])
 def get_bus_active_trip(bus_id: int, db: Session = Depends(get_db)):
     return db.query(Trip).filter(Trip.bus_id == bus_id, Trip.status.in_(["ACTIVE", "PAUSED"])).first()
+
+
+if __name__ == "__main__":
+    import uvicorn
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
+
