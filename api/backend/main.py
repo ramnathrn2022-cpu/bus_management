@@ -51,7 +51,10 @@ from fastapi.middleware.cors import CORSMiddleware
 # CREATE DATABASE
 # --------------------------------------------------
 
-Base.metadata.create_all(bind=engine)
+try:
+    Base.metadata.create_all(bind=engine)
+except Exception as e:
+    print("Database metadata initialization notice:", e)
 
 
 # --------------------------------------------------
