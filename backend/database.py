@@ -3,11 +3,16 @@ from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
+import os
+
 # --------------------------------------------------
 # DATABASE CONFIGURATION
 # --------------------------------------------------
 
-DATABASE_URL = "sqlite:///./bus_booking.db"
+if os.environ.get("VERCEL"):
+    DATABASE_URL = "sqlite:////tmp/bus_booking.db"
+else:
+    DATABASE_URL = "sqlite:///./bus_booking.db"
 
 
 # --------------------------------------------------
