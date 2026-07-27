@@ -91,7 +91,15 @@ export const ManagerDashboard = () => {
     renderTripMarkers(activeTripsList);
 
     // Set up WebSockets
-    const wsUrl = `ws://${window.location.hostname}:8000/ws/track`;
+    const envUrl = import.meta.env.VITE_API_BASE_URL;
+    let wsUrl = `ws://${window.location.hostname}:8000/ws/track`;
+    if (envUrl) {
+      const parsed = new URL(envUrl);
+      const wsProtocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
+      wsUrl = `${wsProtocol}//${parsed.host}/ws/track`;
+    } else if (window.location.protocol === 'https:') {
+      wsUrl = `wss://${window.location.hostname}:8000/ws/track`;
+    }
     wsRef.current = new WebSocket(wsUrl);
 
     wsRef.current.onmessage = (event) => {
