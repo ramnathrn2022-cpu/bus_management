@@ -60,6 +60,19 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Bus Management System", version="1.0.0")
 
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request
+
+class ApiPrefixMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        if request.url.path.startswith("/api/"):
+            request.scope["path"] = request.url.path[4:]
+        elif request.url.path == "/api":
+            request.scope["path"] = "/"
+        return await call_next(request)
+
+app.add_middleware(ApiPrefixMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],

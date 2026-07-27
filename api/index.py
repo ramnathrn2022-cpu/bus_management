@@ -1,22 +1,14 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'backend')))
+root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+backend_dir = os.path.join(root_dir, 'backend')
 
-from main import app
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+if root_dir not in sys.path:
+    sys.path.insert(0, root_dir)
 
-class StripApiPrefixMiddleware:
-    def __init__(self, app):
-        self.app = app
+import backend.main as backend_main
 
-    async def __call__(self, scope, receive, send):
-        if scope["type"] in ("http", "websocket") and scope.get("path", "").startswith("/api"):
-            scope["path"] = scope["path"][4:]
-            if not scope["path"]:
-                scope["path"] = "/"
-            if "raw_path" in scope:
-                scope["raw_path"] = scope["path"].encode("utf-8")
-        await self.app(scope, receive, send)
-
-
-app = StripApiPrefixMiddleware(app)
+app = backend_main.app
