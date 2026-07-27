@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.py"
+      "destination": "https://bus-management-g1gz.onrender.com/$1"
     },
     {
       "source": "/(.*)",
