@@ -16,11 +16,14 @@ from fastapi.security import (
 # JWT CONFIGURATION
 # --------------------------------------------------
 
-SECRET_KEY = "ramnath_bus_management_secret_key"
+import os
 
-ALGORITHM = "HS256"
+SECRET_KEY = os.environ.get("SECRET_KEY", "ramnath_bus_management_secret_key")
 
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
+ALGORITHM = os.environ.get("ALGORITHM", "HS256")
+
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES", 60))
+
 
 
 # --------------------------------------------------
