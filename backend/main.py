@@ -76,9 +76,13 @@ app.add_middleware(
 
 class ApiPrefixMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
-        if request.url.path.startswith("/api/"):
-            request.scope["path"] = request.url.path[4:]
-        elif request.url.path == "/api":
+        path = request.url.path
+        if path.startswith("/api/index.py"):
+            new_path = path[13:]
+            request.scope["path"] = new_path if new_path else "/"
+        elif path.startswith("/api/"):
+            request.scope["path"] = path[4:]
+        elif path == "/api":
             request.scope["path"] = "/"
         return await call_next(request)
 
