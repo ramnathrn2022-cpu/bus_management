@@ -167,31 +167,39 @@ export const TrackBusModal = ({ bus, onClose }) => {
     updateBusMarkerPosition();
 
     // 3. Connect WebSocket
+    let wsUrl = '';
     const envUrl = import.meta.env.VITE_API_BASE_URL;
-    let wsUrl = `ws://${window.location.hostname}:8000/ws/track`;
-    if (envUrl) {
+    if (envUrl && envUrl.startsWith('http')) {
       const parsed = new URL(envUrl);
       const wsProtocol = parsed.protocol === 'https:' ? 'wss:' : 'ws:';
       wsUrl = `${wsProtocol}//${parsed.host}/ws/track`;
-    } else if (window.location.protocol === 'https:') {
-      wsUrl = `wss://${window.location.hostname}:8000/ws/track`;
+    } else {
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const host = window.location.hostname === 'localhost' ? 'localhost:8000' : window.location.host;
+      wsUrl = `${wsProtocol}//${host}/ws/track`;
     }
-    wsRef.current = new WebSocket(wsUrl);
 
-    wsRef.current.onmessage = (event) => {
-      try {
-        const payload = JSON.parse(event.data);
-        if (payload.trip_id === activeTrip.id) {
-          setTelemetry(payload);
-          if (payload.status !== 'ACTIVE') {
-            // If trip gets completed or paused, trigger recheck
-            initTrackingAndMap();
+    try {
+      wsRef.current = new WebSocket(wsUrl);
+      wsRef.current.onmessage = (event) => {
+        try {
+          const payload = JSON.parse(event.data);
+          if (payload.trip_id === activeTrip.id) {
+            setTelemetry(payload);
+            if (payload.status !== 'ACTIVE') {
+              initTrackingAndMap();
+            }
           }
+        } catch (e) {
+          console.error('Failed to parse telemetry', e);
         }
-      } catch (e) {
-        console.error('Failed to parse telemetry', e);
-      }
-    };
+      };
+      wsRef.current.onerror = () => {
+        console.warn('WebSocket connection unavailable; continuing without live sockets.');
+      };
+    } catch (err) {
+      console.warn('WebSocket connection failed to initialize', err);
+    }
 
     return () => {
       if (wsRef.current) wsRef.current.close();

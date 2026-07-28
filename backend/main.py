@@ -66,6 +66,14 @@ app = FastAPI(title="Bus Management System", version="1.0.0")
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class ApiPrefixMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         if request.url.path.startswith("/api/"):
@@ -75,14 +83,6 @@ class ApiPrefixMiddleware(BaseHTTPMiddleware):
         return await call_next(request)
 
 app.add_middleware(ApiPrefixMiddleware)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 # --------------------------------------------------
@@ -832,6 +832,40 @@ def start_trip(data: TripCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_trip)
     return new_trip
+
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: list[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in list(self.active_connections):
+            try:
+                await connection.send_json(message)
+            except Exception:
+                self.disconnect(connection)
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/track")
+async def websocket_tracking_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            await websocket.receive_text()
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception:
+        manager.disconnect(websocket)
 
 
 @app.post("/trips/update-location")

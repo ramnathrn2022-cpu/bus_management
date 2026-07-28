@@ -14,7 +14,7 @@ DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-elif os.environ.get("VERCEL") or os.environ.get("RENDER"):
+elif os.environ.get("VERCEL"):
     os.makedirs("/tmp", exist_ok=True)
     DATABASE_URL = "sqlite:////tmp/bus_booking.db"
 else:
