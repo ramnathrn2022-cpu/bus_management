@@ -51,10 +51,57 @@ from fastapi.middleware.cors import CORSMiddleware
 # CREATE DATABASE
 # --------------------------------------------------
 
+from database import SessionLocal
+
 try:
     Base.metadata.create_all(bind=engine)
 except Exception as e:
     print("Database metadata initialization notice:", e)
+
+def seed_default_users():
+    db = SessionLocal()
+    try:
+        admin_user = db.query(User).filter(User.email == "admin@gmail.com").first()
+        if not admin_user:
+            new_admin = User(
+                name="System Admin",
+                email="admin@gmail.com",
+                password=hash_password("Admin@123"),
+                role="owner"
+            )
+            db.add(new_admin)
+
+        manager_user = db.query(User).filter(User.email == "manager@gmail.com").first()
+        if not manager_user:
+            new_manager = User(
+                name="System Manager",
+                email="manager@gmail.com",
+                password=hash_password("Manager@123"),
+                role="manager"
+            )
+            db.add(new_manager)
+
+        driver_user = db.query(User).filter(User.email == "driver@gmail.com").first()
+        if not driver_user:
+            new_driver = User(
+                name="System Driver",
+                email="driver@gmail.com",
+                password=hash_password("Driver@123"),
+                role="driver"
+            )
+            db.add(new_driver)
+
+        db.commit()
+    except Exception as e:
+        print("User seeding notice:", e)
+        db.rollback()
+    finally:
+        db.close()
+
+try:
+    seed_default_users()
+except Exception as e:
+    print("Seed execution notice:", e)
 
 
 # --------------------------------------------------
